@@ -180,9 +180,12 @@ public class CustomList<T> implements List<T> {
         if (index < 0 || index > size()) {
             throw new IndexOutOfBoundsException();
         }
-        resizeElements();
-        arraycopy(elements, index, elements, index + 1, size() - index);
-        elements[index + 1] = element;
+        T[] newElements = initElements(elementsCount + 1);
+        arraycopy(elements, 0, newElements, 0, index);
+        arraycopy(elements, index, newElements, index + 1, elementsCount - index);
+        newElements[index] = element;
+        elements = newElements;
+        elementsCount++;
     }
 
     @Override

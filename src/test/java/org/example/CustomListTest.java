@@ -4,11 +4,21 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
 class CustomListTest {
+
+    private static Stream<Arguments> impls() {
+        return Stream.of(
+                Arguments.of(new ArrayList<Integer>()),
+                Arguments.of(new CustomList<Integer>()));
+    }
 
     private List<Integer> customList;
 
@@ -70,27 +80,27 @@ class CustomListTest {
 
     }
 
-    @Test
-    void addAfterIndex() {
-        customList.add(0);
-        customList.add(1);
-        customList.add(2);
-        customList.add(3);
-        customList.add(4);
-        customList.add(5);
+    @ParameterizedTest
+    @MethodSource("impls")
+    void addAfterIndex(List list) {
+        list.add(0);
+        list.add(1);
+        list.add(2);
+        list.add(3);
+        list.add(4);
+        list.add(5);
         //skip 6
-        customList.add(7);
-        customList.add(8);
-        customList.add(9);
-        customList.add(10);
-        customList.add(11);
+        list.add(7);
+        list.add(8);
+        list.add(9);
+        list.add(10);
+        list.add(11);
         //add 6
-        customList.add(5, 6);
+        list.add(6, 6);
 
-        for (int i = 0; i < customList.size(); i++) {
-            Assertions.assertEquals(customList.get(i), i);
+        for (int i = 0; i < list.size(); i++) {
+            Assertions.assertEquals(list.get(i), i);
         }
-
     }
 
     @Test

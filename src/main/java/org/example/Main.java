@@ -7,6 +7,26 @@ import java.util.ListIterator;
 
 public class Main {
     public static void main(String[] args) {
+
+        List<Integer> list1 = new CustomList<>();
+        list1.add(0);
+        list1.add(1);
+        list1.add(2);
+        list1.add(3);
+        list1.add(4);
+        list1.add(5);
+        //skip 6
+        list1.add(7);
+        list1.add(8);
+        list1.add(9);
+        list1.add(10);
+        list1.add(11);
+        //add 6
+        list1.add(6, 6);
+
+
+
+
         List<Integer> list = new ArrayList<>();
         list.add(1);
         list.add(2);
