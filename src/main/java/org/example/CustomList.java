@@ -101,7 +101,10 @@ public class CustomList<T> implements List<T> {
         arraycopy(toAdd, 0, result, elementsCount, toAdd.length);
         elementsCount += toAdd.length;
         elements = result;
-        return true;
+        if (toAdd.length > 0) {
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -125,6 +128,7 @@ public class CustomList<T> implements List<T> {
             int index = indexOf(o);
             if (index >= 0) {
                 removeByIndex(index);
+                elementsCount--;
                 result = true;
             }
         }

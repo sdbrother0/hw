@@ -158,12 +158,12 @@ class CustomListTest {
 
     @ParameterizedTest
     @MethodSource("impls")
-    void testAddAll(List<Integer> list) {
-    }
-
-    @ParameterizedTest
-    @MethodSource("impls")
     void removeAll(List<Integer> list) {
+        list.add(1);
+        list.add(2);
+        list.add(3);
+        list.removeAll(List.of(2, 3));
+        Assertions.assertEquals(1, list.size());
     }
 
     @ParameterizedTest
