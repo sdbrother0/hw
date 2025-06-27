@@ -34,7 +34,7 @@ public class Main {
             System.out.println("---------------------------------------------------");
         }
 
-        //
+        //Remove test
         for (int my = 0; my < 5; my++) {
             for (int test = 0; test < 3; test++) {
 
