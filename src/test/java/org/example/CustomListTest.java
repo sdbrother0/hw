@@ -141,11 +141,19 @@ class CustomListTest {
     @ParameterizedTest
     @MethodSource("impls")
     void containsAll(List<Integer> list) {
+        list.add(1);
+        list.add(2);
+        list.add(3);
+        Assertions.assertTrue(list.containsAll(List.of(1, 2, 3)));
     }
 
     @ParameterizedTest
     @MethodSource("impls")
     void addAll(List<Integer> list) {
+        list.add(1);
+        list.add(2);
+        list.addAll(list);
+        Assertions.assertEquals(4, list.size());
     }
 
     @ParameterizedTest

@@ -95,9 +95,12 @@ public class CustomList<T> implements List<T> {
 
     @Override
     public boolean addAll(Collection<? extends T> c) {
-        for (Object object : c) {
-            this.add((T) object);
-        }
+        T[] toAdd = (T[]) c.toArray();
+        T[] result = (T[]) initElements(elementsCount + toAdd.length);
+        arraycopy(elements, 0, result, 0, elementsCount);
+        arraycopy(toAdd, 0, result, elementsCount, toAdd.length);
+        elementsCount += toAdd.length;
+        elements = result;
         return true;
     }
 
