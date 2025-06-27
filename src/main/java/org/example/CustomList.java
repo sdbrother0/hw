@@ -13,7 +13,7 @@ public class CustomList<T> implements List<T> {
     private int elementsCount = 0;
     private T[] elements = initElements(INIT_CAPACITY);
 
-    private boolean isManualCopy = false;
+    private boolean isManualCopy = true;
 
     public CustomList() {
     }
@@ -21,14 +21,6 @@ public class CustomList<T> implements List<T> {
 
     public CustomList(T[] elements) {
         this.elements = elements;
-    }
-
-    public void setManualCopy(boolean isManualCopy) {
-        this.isManualCopy = isManualCopy;
-    }
-
-    public boolean isManualCopy() {
-        return isManualCopy;
     }
 
     @Override
@@ -196,6 +188,7 @@ public class CustomList<T> implements List<T> {
         T element = elements[elementsCount];
         removeByIndex(index);
         elements[elementsCount] = null;
+        elementsCount--;
         return element;
     }
 
@@ -242,8 +235,8 @@ public class CustomList<T> implements List<T> {
 
     private void arraycopy(T[] src, int srcPos, T[] dest, int destPos, int length) {
         if (isManualCopy) {
-            for (int i = srcPos; i < srcPos + length; i++) {
-                dest[destPos + i] = src[i];
+            for (int i = 0; i < length; i++) {
+                dest[destPos + i] = src[srcPos + i];
             }
         } else {
             System.arraycopy(src, srcPos, dest, destPos, length);
@@ -309,8 +302,8 @@ public class CustomList<T> implements List<T> {
             if (!hasPrevious()) {
                 throw new NoSuchElementException();
             }
-            index--;
             T element = elements[index];
+            index--;
             return element;
         }
 
