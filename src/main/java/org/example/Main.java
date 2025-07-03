@@ -10,6 +10,10 @@ import java.util.List;
 
 public class Main {
     public static void main(String[] args) throws InterruptedException {
+        //hw01();
+    }
+
+    private static void hw01() throws InterruptedException {
         //Bulk Addition Test: Add 1,000,000 elements and measure:
         for (int my = 0; my < 5; my++) {
             for (int test = 0; test < 3; test++) {
@@ -61,6 +65,6 @@ public class Main {
             Thread.sleep(1000);
             System.out.println("---------------------------------------------------");
         }
-    }
 
+    }
 }
