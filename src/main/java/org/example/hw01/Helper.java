@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-public class Hw01 {
+public class Helper {
     public static void init() throws InterruptedException {
         //Bulk Addition Test: Add 1,000,000 elements and measure:
         for (int my = 0; my < 5; my++) {
