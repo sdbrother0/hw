@@ -1,7 +1,6 @@
 package org.example.hw01;
 
 import com.google.common.base.Stopwatch;
-import org.example.CustomList;
 
 import java.time.Duration;
 import java.util.ArrayList;
