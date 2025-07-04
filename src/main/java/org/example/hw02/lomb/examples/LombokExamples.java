@@ -11,7 +11,7 @@ import org.example.hw02.lomb.Util;
 import java.math.BigDecimal;
 
 public class LombokExamples {
-    public static void init() {
+    public static void run() {
 
         //@Data - Equivalent to @Getter @Setter @RequiredArgsConstructor @ToString @EqualsAndHashCode.
         Person person1 = new Person();

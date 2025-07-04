@@ -8,7 +8,7 @@ import org.example.hw02.tst.utils.CustomTestRunner;
 public class Main {
     public static void main(String[] args) {
         //Part 1
-        LombokExamples.init();
+        LombokExamples.run();
 
         //Part 2
         System.out.printf("fibonacciRecursive: %d%n", FibonacciAlgorithms.fibonacciRecursive(8));
