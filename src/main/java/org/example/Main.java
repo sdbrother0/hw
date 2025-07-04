@@ -5,10 +5,8 @@ import org.example.hw02.fib.FibonacciAlgorithms;
 import org.example.hw02.lomb.examples.LombokExamples;
 import org.example.hw02.tst.utils.CustomTestRunner;
 
-import java.io.IOException;
-
 public class Main {
-    public static void main(String[] args) throws IOException, ClassNotFoundException {
+    public static void main(String[] args) {
         //Part 1
         LombokExamples.init();
 
