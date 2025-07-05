@@ -11,10 +11,8 @@ public class Main {
         LombokExamples.run();
 
         //Part 2
-        System.out.printf("fibonacciRecursive: %d%n", FibonacciAlgorithms.fibonacciRecursive(8));
-        System.out.printf("fibonacciIterative: %d%n", FibonacciAlgorithms.fibonacciIterative(8));
-        FibonacciAlgorithms fibMem = new FibonacciAlgorithms();
-        System.out.printf("fibonacciMemorized: %d%n", fibMem.fibonacciMemorized(8));
+        FibonacciAlgorithms.run();
+        //fibonacciRecursive(50), duration: 29 999 ms - so long time
 
         //Part 3
         ArrayOperations.run();

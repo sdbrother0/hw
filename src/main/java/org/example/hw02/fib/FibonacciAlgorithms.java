@@ -43,4 +43,19 @@ public class FibonacciAlgorithms {
         }
         return y;
     }
+
+    public static void run() {
+        System.out.printf("fibonacciRecursive: %d%n", FibonacciAlgorithms.fibonacciRecursive(35));
+        System.out.printf("fibonacciIterative: %d%n", FibonacciAlgorithms.fibonacciIterative(35));
+        FibonacciAlgorithms fibMem = new FibonacciAlgorithms();
+        System.out.printf("fibonacciMemorized: %d%n", fibMem.fibonacciMemorized(35));
+
+        /*
+        Runtime runtime = Runtime.getRuntime();
+        long freeMem = runtime.freeMemory();
+        long currentTime = System.currentTimeMillis();
+        FibonacciAlgorithms.fibonacciRecursive(50);
+        System.out.printf("FibonacciRecursive 50, duration: %sms memory: %s, %n", System.currentTimeMillis() - currentTime, freeMem - runtime.freeMemory());
+        */
+    }
 }
