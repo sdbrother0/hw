@@ -7,6 +7,7 @@ public class FibonacciAlgorithms {
 
     private Map<Integer, Long> cache = new HashMap<>();
 
+    //O(2^n)
     public static long fibonacciRecursive(int n) {
         if (n <= 1) {
             return n;
@@ -14,19 +15,20 @@ public class FibonacciAlgorithms {
         return fibonacciRecursive(n - 1) + fibonacciRecursive(n - 2);
     }
 
+    //O(n)
     public long fibonacciMemorized(int n) {
+        if (cache.containsKey(n)) {
+            return cache.get(n);
+        }
         if (n <= 1) {
             return n;
         }
-        if (!cache.containsKey(n - 1 )) {
-            cache.put(n - 1, fibonacciMemorized(n - 1));
-        }
-        if (!cache.containsKey(n - 2 )) {
-            cache.put(n - 2, fibonacciMemorized(n - 2));
-        }
-        return cache.get(n - 1) + cache.get(n - 2);
+        long res = fibonacciMemorized(n - 1) + fibonacciMemorized(n - 2);
+        cache.put(n, res);
+        return res;
     }
 
+    //O(n)
     public static long fibonacciIterative(int n) {
         long x = 0;
         long y = 1;
