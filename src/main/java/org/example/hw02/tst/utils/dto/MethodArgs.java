@@ -15,7 +15,7 @@ public class MethodArgs {
     private List<Method> methodListBefore;
     private List<Method> methodListAfter;
     private Object[] args;
-    long timeout;
+    private long timeout;
     private TimeUnit timeUnit;
     private Exception error;
     private Duration duration;
