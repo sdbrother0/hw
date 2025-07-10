@@ -1,6 +1,7 @@
 package org.example;
 
 import org.example.hw01.CustomList;
+import org.example.hw03.CustomLinkedList;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -10,12 +11,17 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 
 class CustomListTest {
 
     private static Stream<Arguments> impls() {
-        return Stream.of(Arguments.of(new ArrayList<Integer>()), Arguments.of(new CustomList<Integer>()));
+        return Stream.of(
+                Arguments.of(new ArrayList<Integer>()),
+                Arguments.of(new CustomList<Integer>()),
+                Arguments.of(new CustomLinkedList<Integer>())
+        );
     }
 
     @ParameterizedTest
@@ -63,6 +69,7 @@ class CustomListTest {
     @ParameterizedTest
     @MethodSource("impls")
     void iteratorList(List<Integer> list) {
+        AtomicInteger atomicInteger = new AtomicInteger(0);
         list.add(1);
         list.add(2);
         list.add(3);
@@ -115,7 +122,7 @@ class CustomListTest {
         list.add(4);
         list.add(5);
         //skip 6
-        list.add(7);
+        list.add(7); //6
         list.add(8);
         list.add(9);
         list.add(10);
@@ -125,6 +132,7 @@ class CustomListTest {
         for (int i = 0; i < list.size(); i++) {
             Assertions.assertEquals(i, list.get(i));
         }
+        System.out.println("x");
     }
 
     @ParameterizedTest
