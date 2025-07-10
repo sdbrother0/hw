@@ -122,7 +122,7 @@ class CustomListTest {
         list.add(4);
         list.add(5);
         //skip 6
-        list.add(7); //6
+        list.add(7);
         list.add(8);
         list.add(9);
         list.add(10);
@@ -132,7 +132,6 @@ class CustomListTest {
         for (int i = 0; i < list.size(); i++) {
             Assertions.assertEquals(i, list.get(i));
         }
-        System.out.println("x");
     }
 
     @ParameterizedTest
