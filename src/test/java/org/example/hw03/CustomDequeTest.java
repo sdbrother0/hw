@@ -1,15 +1,25 @@
 package org.example.hw03;
 
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.Deque;
+import java.util.stream.Stream;
 
 class CustomDequeTest {
 
-    @Test
-    void testCustomStack() {
-        Deque<Integer> deque = new CustomDeque<>();
+    private static Stream<Arguments> impls() {
+        return Stream.of(
+                Arguments.of(new CustomDeque<Integer>()),
+                Arguments.of(new CustomDequeArrayListBased<Integer>())
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("impls")
+    void testCustomStack(Deque<Integer> deque) {
         deque.push(1);
         deque.push(2);
         deque.push(3);
