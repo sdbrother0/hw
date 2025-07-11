@@ -145,6 +145,12 @@ public class CustomLinkedList<T> implements List<T> {
         if (index < 0 || index >= size()) {
             throw new IndexOutOfBoundsException();
         }
+        if (index == 0) {
+            return head.getData();
+        }
+        if (index == size() - 1) {
+            return tail.getData();
+        }
         IteratorNode it = new IteratorNode();
         while (it.hasNext()) {
             Node node = it.next();
@@ -175,6 +181,17 @@ public class CustomLinkedList<T> implements List<T> {
 
     @Override
     public void add(int index, T element) {
+        if (index < 0 || index > size()) {
+            throw new IndexOutOfBoundsException();
+        }
+        if (index == 0) {
+            head = addNodeBefore(head, element);
+            return;
+        }
+        if (index == size() - 1) {
+            tail = addNodeAfter(tail, element);
+            return;
+        }
         addAll(index, List.of(element));
     }
 
@@ -393,6 +410,9 @@ public class CustomLinkedList<T> implements List<T> {
         }
         Node prev = node.getPrev();
         Node next = node.getNext();
+        if (node.equals(tail) && prev != null) {
+            tail = prev;
+        }
         if (node.equals(head) && next != null) {
             head = next;
         } else {
@@ -404,6 +424,22 @@ public class CustomLinkedList<T> implements List<T> {
             }
         }
         elementsCount--;
+    }
+
+    private Node addNodeBefore(Node node, T data) {
+        if (node == null) {
+            node = new Node(data);
+        }
+        if (head == null) {
+            head = node;
+            elementsCount++;
+            return node;
+        }
+        Node newNode = new Node(data);
+        newNode.setNext(node);
+        node.setPrev(newNode);
+        elementsCount++;
+        return newNode;
     }
 
     private Node addNodeAfter(Node node, T data) {

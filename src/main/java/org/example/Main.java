@@ -9,11 +9,9 @@ public class Main {
         + Implement your own LinkedList + Implement your own queue & stack
         + add your new linkedlist to the performance test from the hw01.
         + compare performance of your different custom List implementations
-        Implement your deque implementation based on your own linkedlist
+        + Implement your deque implementation based on your own linkedlist
         Implement your own dequeue implementation based on dynamic array
          */
-
-
         PerfTest.init();
 
     }
