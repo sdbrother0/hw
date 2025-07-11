@@ -117,7 +117,7 @@ public class CustomDeque<E> implements Deque<E> {
 
     @Override
     public boolean add(E e) {
-        return add(e);
+        return list.add(e);
     }
 
     @Override
