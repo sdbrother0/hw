@@ -48,34 +48,36 @@ public class CustomTestRunner {
         System.out.printf("Tests discovered: %s%n", methodMap.values().stream().flatMap(Collection::stream).map(MethodArgs::getMethod).distinct().count());
         System.out.println("Tests Results:");
         Stopwatch stopWatch = Stopwatch.createStarted();
-        methodMap.forEach((clazz, methods) -> {
-            try {
-                Object instance = clazz.getDeclaredConstructor().newInstance();
-                methods.forEach(methodArgs -> {
-                    String className = clazz.getName().replace(clazz.getPackageName() + ".", "");
-                    Method method = methodArgs.getMethod();
-                    //Call methods, annotated @BeforeEach
-                    methodArgs.getMethodListBefore().forEach(beforeMethod -> {
-                        try {
-                            beforeMethod.invoke(instance);
-                        } catch (Exception e) {
-                            System.err.println("Error: " + e.getMessage());
-                        }
+        try (ExecutorService executorService = Executors.newSingleThreadExecutor()) {
+            methodMap.forEach((clazz, methods) -> {
+                try {
+                    Object instance = clazz.getDeclaredConstructor().newInstance();
+                    methods.forEach(methodArgs -> {
+                        String className = clazz.getName().replace(clazz.getPackageName() + ".", "");
+                        Method method = methodArgs.getMethod();
+                        //Call methods, annotated @BeforeEach
+                        methodArgs.getMethodListBefore().forEach(beforeMethod -> {
+                            try {
+                                beforeMethod.invoke(instance);
+                            } catch (Exception e) {
+                                System.err.println("Error: " + e.getMessage());
+                            }
+                        });
+                        runTest(executorService, className, method, instance, methodArgs.getArgs(), methodArgs.getTimeout(), methodArgs.getTimeUnit(), methodArgs);
+                        //Call methods, annotated @AfterEach
+                        methodArgs.getMethodListAfter().forEach(afterMethod -> {
+                            try {
+                                afterMethod.invoke(instance);
+                            } catch (Exception e) {
+                                System.err.println("Error: " + e.getMessage());
+                            }
+                        });
                     });
-                    runTest(className, method, instance, methodArgs.getArgs(), methodArgs.getTimeout(), methodArgs.getTimeUnit(), methodArgs);
-                    //Call methods, annotated @AfterEach
-                    methodArgs.getMethodListAfter().forEach(afterMethod -> {
-                        try {
-                            afterMethod.invoke(instance);
-                        } catch (Exception e) {
-                            System.err.println("Error: " + e.getMessage());
-                        }
-                    });
-                });
-            } catch (Exception e) {
-                System.err.println("Error: " + e.getMessage());
-            }
-        });
+                } catch (Exception e) {
+                    System.err.println("Error: " + e.getMessage());
+                }
+            });
+        }
         stopWatch.stop();
         long countOk = methodMap.values().stream().flatMap(Collection::stream).filter(result -> Objects.isNull(result.getError())).count();
         long countFailed = methodMap.values().stream().flatMap(Collection::stream).filter(result -> Objects.nonNull(result.getError())).count();
@@ -156,11 +158,11 @@ public class CustomTestRunner {
         methodMaps.get(clazz).add(methodArgs);
     }
 
-    private static Object runTest(String className, Method method, Object instance, Object[] args,
-                                  long timeout, TimeUnit unit, MethodArgs methodArgs) {
+    private static void runTest(ExecutorService executorService, String className, Method method, Object instance, Object[] args,
+                                long timeout, TimeUnit unit, MethodArgs methodArgs) {
         Stopwatch stopWatch = Stopwatch.createStarted();
-        try (ExecutorService service = Executors.newSingleThreadExecutor()) {
-            Future<?> result = service.submit(() -> {
+        try {
+            Future<?> result = executorService.submit(() -> {
                 try {
                     if (args.length > 0) {
                         method.invoke(instance, args);
@@ -175,7 +177,7 @@ public class CustomTestRunner {
                     System.err.println("Error: " + e.getMessage());
                 }
             });
-            return result.get(timeout, unit);
+            result.get(timeout, unit);
         } catch (ExecutionException | InterruptedException e) {
             System.err.println("Error: " + e.getMessage());
         } catch (TimeoutException e) {
@@ -185,7 +187,6 @@ public class CustomTestRunner {
             methodArgs.setDuration(stopWatch.elapsed());
             printResult(className, method, methodArgs);
         }
-        return null;
     }
 
     private static void printResult(String className, Method method, MethodArgs methodArgs) {
