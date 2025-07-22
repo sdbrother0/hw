@@ -154,7 +154,7 @@ public class CustomDequeArrayListBased<E> implements Deque<E> {
 
     @Override
     public E peek() {
-        return peekFirst();
+        return peekLast();
     }
 
     @Override
@@ -179,13 +179,13 @@ public class CustomDequeArrayListBased<E> implements Deque<E> {
 
     @Override
     public void push(E e) {
-        list.add(0, e);
+        list.add(e);
     }
 
     @Override
     public E pop() {
-        E pop = list.get(0);
-        list.remove(0);
+        E pop = list.getLast();
+        list.removeLast();
         return pop;
     }
 
