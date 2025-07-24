@@ -1,33 +1,39 @@
 package org.example.hw03;
 
-import org.example.hw01.CustomList;
+import lombok.Getter;
 
 import java.util.Collection;
 import java.util.Deque;
 import java.util.Iterator;
-import java.util.List;
 import java.util.NoSuchElementException;
 
 public class CustomDequeArrayListBased<E> implements Deque<E> {
 
-    private final List<E> list = new CustomList<>();
+    private static final double MAG_FACTOR = 1.5;
+    private static final int INIT_CAPACITY = 10;
+    private int elementsCount = 0;
+    private E[] elements = initElements(INIT_CAPACITY);
+    private int head;
+    private int tail;
 
     @Override
     public void addFirst(E e) {
-        if (list.isEmpty()) {
-            list.add(e);
-        } else {
-            list.add(0, e);
+        if (size() == elements.length) {
+            resizeElements();
         }
+        head = (head + elements.length - 1) % elements.length;
+        elements[head] = e;
+        elementsCount++;
     }
 
     @Override
     public void addLast(E e) {
-        if (list.isEmpty()) {
-            list.add(e);
-        } else {
-            list.add(list.size(), e);
+        if (size() == elements.length) {
+            resizeElements();
         }
+        elements[tail] = e;
+        tail = (tail + 1) % elements.length;
+        elementsCount++;
     }
 
     @Override
@@ -44,93 +50,97 @@ public class CustomDequeArrayListBased<E> implements Deque<E> {
 
     @Override
     public E removeFirst() {
-        if (list.isEmpty()) {
-            throw new NoSuchElementException();
-        }
-        E first = list.get(0);
-        list.remove(0);
-        return first;
+        E element = elements[head];
+        elements[head] = null;
+        head = (head + 1) % elements.length;
+        elementsCount--;
+        return element;
     }
 
     @Override
     public E removeLast() {
-        E last = list.get(list.size() - 1);
-        list.remove(list.size() - 1);
-        return last;
+        tail = (tail + elements.length - 1) % elements.length;
+        E element = elements[tail];
+        elements[tail] = null;
+        elementsCount--;
+        return element;
     }
 
     @Override
     public E pollFirst() {
-        if (!list.isEmpty()) {
-            return list.get(0);
-        }
-        return null;
+        return removeFirst();
     }
 
     @Override
     public E pollLast() {
-        if (!list.isEmpty()) {
-            return list.get(list.size() - 1);
-        }
-        return null;
+        return removeLast();
     }
 
     @Override
     public E getFirst() {
-        if (list.isEmpty()) {
-            throw new NoSuchElementException();
-        }
-        return list.get(0);
+        return elements[head];
     }
 
     @Override
     public E getLast() {
-        if (list.isEmpty()) {
-            throw new NoSuchElementException();
-        }
-        return list.get(list.size() - 1);
+        return elements[(tail + elements.length - 1) % elements.length];
     }
 
     @Override
     public E peekFirst() {
-        if (!list.isEmpty()) {
-            return list.get(0);
-        }
-        return null;
+        return getFirst();
     }
 
     @Override
     public E peekLast() {
-        if (!list.isEmpty()) {
-            return list.get(list.size() - 1);
-        }
-        return null;
+        return getLast();
     }
 
     @Override
     public boolean removeFirstOccurrence(Object o) {
-        return list.remove(o);
+        CustomIterator it = (CustomIterator) iterator();
+        while (it.hasNext()) {
+            if (it.equals(o)) {
+                removeByIndex(it.getCurrentIndex());
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
     public boolean removeLastOccurrence(Object o) {
+        int lastIndex = -1;
+        CustomIterator it = (CustomIterator) iterator();
+        while (it.hasNext()) {
+            if (it.equals(o)) {
+                lastIndex = it.getCurrentIndex();
+            }
+        }
+        if (lastIndex > 0) {
+            removeByIndex(lastIndex);
+            return true;
+        }
         return false;
     }
 
     @Override
     public boolean add(E e) {
-        return list.add(e);
+        addLast(e);
+        return true;
     }
 
     @Override
     public boolean offer(E e) {
-        list.add(list.size() - 1, e);
+        elements[tail] = e;
+        tail = (tail + 1) % elements.length;
+        elementsCount++;
         return true;
     }
 
     @Override
     public E remove() {
-        if (list.isEmpty()) {
+        if (isEmpty()) {
             throw new NoSuchElementException();
         }
         return pop();
@@ -138,99 +148,232 @@ public class CustomDequeArrayListBased<E> implements Deque<E> {
 
     @Override
     public E poll() {
-        if (!list.isEmpty()) {
-            return pop();
-        }
-        return null;
+        return pop();
     }
 
     @Override
     public E element() {
-        if (list.isEmpty()) {
-            throw new NoSuchElementException();
-        }
-        return peek();
+        return getFirst();
     }
 
     @Override
     public E peek() {
-        return peekLast();
+        return getFirst();
     }
 
     @Override
     public boolean addAll(Collection<? extends E> c) {
-        return addAll(c);
+        for (E element : c) {
+            addLast(element);
+        }
+        return !c.isEmpty();
     }
 
     @Override
     public boolean removeAll(Collection<?> c) {
-        return removeAll(c);
+        for (Object element : c) {
+            remove(element);
+        }
+        return !c.isEmpty();
     }
 
     @Override
     public boolean retainAll(Collection<?> c) {
-        return removeAll(c);
+        boolean result = false;
+        boolean found;
+        CustomIterator it = (CustomIterator) iterator();
+        while (it.hasNext()) {
+            found = false;
+            for (Object o : c) {
+                if (c.equals(o)) {
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                result = true;
+                removeByIndex(it.getCurrentIndex());
+            }
+        }
+        return result;
     }
 
     @Override
     public void clear() {
-        list.clear();
+        elementsCount = 0;
+        head = 0;
+        tail = 0;
+        for (int i = 0; i < size(); i++) {
+            elements[(head + i) % elements.length] = null;
+        }
     }
 
     @Override
     public void push(E e) {
-        list.add(e);
+        addFirst(e);
     }
 
     @Override
     public E pop() {
-        E pop = list.getLast();
-        list.removeLast();
-        return pop;
+        if (isEmpty()) {
+            throw new NoSuchElementException();
+        }
+        return removeFirst();
     }
 
     @Override
     public boolean remove(Object o) {
-        return list.remove(o);
+        return removeFirstOccurrence(o);
     }
 
     @Override
     public boolean containsAll(Collection<?> c) {
-        return list.containsAll(c);
+        for (Object object : c) {
+            if (!contains(object)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     @Override
     public boolean contains(Object o) {
-        return list.contains(o);
+        for (int i = 0; i < size(); i++) {
+            if (o.equals(elements[(head + i) % elements.length])) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
     public int size() {
-        return list.size();
+        return elementsCount;
     }
 
     @Override
     public boolean isEmpty() {
-        return list.isEmpty();
+        return elementsCount == 0;
     }
 
     @Override
     public Iterator<E> iterator() {
-        return list.iterator();
+        return new CustomIterator();
     }
 
     @Override
     public Object[] toArray() {
-        return list.toArray();
+        E[] result = initElements(size());
+        for (int i = 0; i < size(); i++) {
+            result[i] = elements[(head + i) % elements.length];
+        }
+        return result;
     }
 
     @Override
     public <T> T[] toArray(T[] a) {
-        return list.toArray(a);
+        if (a.length < elementsCount) {
+            return (T[]) toArray();
+        }
+        if (a.length > elementsCount) {
+            System.arraycopy(elements, 0, a, 0, elementsCount);
+            a[elementsCount] = null;
+        }
+        return a;
     }
 
     @Override
     public Iterator<E> descendingIterator() {
-        return list.iterator();
+        return new CustomDescendIterator();
     }
+
+    private void removeByIndex(int index) {
+        if (index < 0 || index >= size()) {
+            throw new IndexOutOfBoundsException();
+        }
+        if (index == head) {
+            removeFirst();
+        } else if (index == (tail + elements.length - 1) % elements.length) {
+            removeLast();
+        } else {
+            if (index - head < tail - index) {
+                for (int i = index; i != head; i = (i + elements.length - 1) % elements.length) {
+                    elements[i] = elements[(i + elements.length - 1) % elements.length];
+                }
+                elements[head] = null;
+                head = (head + 1) % elements.length;
+            } else {
+                for (int i = index; i != tail; i = (i + 1) % elements.length) {
+                    elements[i] = elements[(i + 1) % elements.length];
+                }
+                elements[(tail + elements.length - 1) % elements.length] = null;
+                tail = (tail + elements.length - 1) % elements.length;
+            }
+            elementsCount--;
+        }
+    }
+
+    private E[] initElements(int length) {
+        return (E[]) new Object[length];
+    }
+
+    private void resizeElements() {
+        if (elements.length == elementsCount) {
+            int newLength = (int) (elementsCount * MAG_FACTOR);
+            if (newLength == Integer.MAX_VALUE) {
+                throw new OutOfMemoryError();
+            }
+            E[] newElements = initElements(newLength);
+            for (int i = 0; i < size(); i++) {
+                newElements[i] = elements[(head + i) % elements.length];
+            }
+            elements = newElements;
+            head = 0;
+            tail = size();
+        }
+    }
+
+    private class CustomIterator implements Iterator<E> {
+        @Getter
+        private int currentIndex = head;
+        private int idx = elementsCount;
+
+        @Override
+        public boolean hasNext() {
+            return idx > 0;
+        }
+
+        @Override
+        public E next() {
+            if (!hasNext()) {
+                throw new NoSuchElementException();
+            }
+            E element = elements[currentIndex];
+            currentIndex = (currentIndex + 1) % elements.length;
+            idx--;
+            return element;
+        }
+    }
+
+    private class CustomDescendIterator implements Iterator<E> {
+        private int currentIndex = (tail + elements.length - 1) % elements.length;
+        private int idx = elementsCount;
+
+        @Override
+        public boolean hasNext() {
+            return idx > 0;
+        }
+
+        @Override
+        public E next() {
+            if (!hasNext()) {
+                throw new NoSuchElementException();
+            }
+            E element = elements[currentIndex];
+            currentIndex = (currentIndex + elements.length - 1) % elements.length;
+            idx--;
+            return element;
+        }
+    }
+
 }
