@@ -1,6 +1,7 @@
 package org.example;
 
 import org.example.hw01.CustomList;
+import org.example.hw03.CustomLinkedList;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -15,7 +16,11 @@ import java.util.stream.Stream;
 class CustomListTest {
 
     private static Stream<Arguments> impls() {
-        return Stream.of(Arguments.of(new ArrayList<Integer>()), Arguments.of(new CustomList<Integer>()));
+        return Stream.of(
+                Arguments.of(new ArrayList<Integer>()),
+                Arguments.of(new CustomList<Integer>()),
+                Arguments.of(new CustomLinkedList<Integer>())
+        );
     }
 
     @ParameterizedTest

@@ -192,9 +192,8 @@ public class CustomList<T> implements List<T> {
         if (index < 0 || index >= elementsCount) {
             throw new IndexOutOfBoundsException();
         }
-        T element = elements[elementsCount];
+        T element = elements[index];
         removeByIndex(index);
-        elements[elementsCount] = null;
         elementsCount--;
         return element;
     }
