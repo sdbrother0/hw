@@ -1,6 +1,5 @@
-package org.example;
+package org.example.hw01;
 
-import org.example.hw01.CustomList;
 import org.example.hw03.CustomLinkedList;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.params.ParameterizedTest;
