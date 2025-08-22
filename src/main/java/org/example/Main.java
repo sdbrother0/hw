@@ -49,9 +49,12 @@ public class Main {
         duration = System.currentTimeMillis() - start;
         System.out.println("Sync duration millis: " + duration);
 
+//        start = System.currentTimeMillis();
 //        for (int i = 0; i < 100; i++) {
 //            new ListTest().test(2);
 //        }
+//        duration = System.currentTimeMillis() - start;
+//        System.out.println("Sync duration millis: " + duration);
 
         /*
         Deadlock deadlock = new Deadlock();
