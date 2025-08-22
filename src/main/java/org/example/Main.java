@@ -47,7 +47,7 @@ public class Main {
             new ListTest().test(1);
         }
         duration = System.currentTimeMillis() - start;
-        System.out.println("Unsafe duration millis: " + duration);
+        System.out.println("Sync duration millis: " + duration);
 
 //        for (int i = 0; i < 100; i++) {
 //            new ListTest().test(2);
