@@ -18,13 +18,27 @@ public class Bank {
     }
 
     private Map<Integer, Long> accounts = new HashMap<>();
+    private Integer[] accountsObjectSync;
+    private Lock[] accountsLock;
     private Random random = new Random();
 
     public Bank(int numberOfAccounts, long minBalance, long maxBalance) {
+        accountsObjectSync = new Integer[numberOfAccounts];
+        accountsLock = new ReentrantLock[numberOfAccounts];
         for (int i = 0; i < numberOfAccounts; i++) {
+            Integer accNum = i;
+            accountsObjectSync[i] = accNum;
             long rndValue = random.nextLong((maxBalance - minBalance) + 1) + minBalance;
-            accounts.put(i, rndValue);
+            accounts.put(accNum, rndValue);
         }
+    }
+
+    public Object getAccountObjectSync(int accountNumber) {
+        return accountsObjectSync[accountNumber];
+    }
+
+    public Lock getAccountLock(int accountNumber) {
+        return accountsLock[accountNumber];
     }
 
     public int pickRandomAccountId() {
@@ -47,7 +61,7 @@ public class Bank {
         return sum;
     }
 
-    public void transfer() {
+    public void transferUnsafe() {
         int from = pickRandomAccountId();
         int to = pickRandomAccountId();
         long value = getAccountBalance(from);
@@ -60,15 +74,42 @@ public class Bank {
         setAccountBalance(to, balTo);
     }
 
-    public synchronized void transferSynchronized() {
-        transfer();
+    public void transferSynchronized() {
+        int from = pickRandomAccountId();
+        int to = pickRandomAccountId();
+        synchronized (getAccountObjectSync(from)) {
+            synchronized (getAccountObjectSync(to)) {
+                long value = getAccountBalance(from);
+                long x = value == 0 ? 0 : random.nextLong(value);
+                // withdraw
+                long balFrom = getAccountBalance(from) - x;
+                setAccountBalance(from, balFrom);
+                // deposit
+                long balTo = getAccountBalance(to) + x;
+                setAccountBalance(to, balTo);
+            }
+        }
     }
-    public synchronized void transferReentrantLock(Lock lock) {
+
+    public void transferReentrantLock() {
+        int from = pickRandomAccountId();
+        int to = pickRandomAccountId();
+        Lock accFromLock = getAccountLock(from);
+        Lock accToLock = getAccountLock(to);
         try {
-            lock.lock();
-            transfer();
+            accFromLock.lock();
+            accToLock.lock();
+            long value = getAccountBalance(from);
+            long x = value == 0 ? 0 : random.nextLong(value);
+            // withdraw
+            long balFrom = getAccountBalance(from) - x;
+            setAccountBalance(from, balFrom);
+            // deposit
+            long balTo = getAccountBalance(to) + x;
+            setAccountBalance(to, balTo);
         } finally {
-            lock.unlock();
+            accFromLock.unlock();
+            accToLock.unlock();
         }
     }
 
@@ -76,12 +117,11 @@ public class Bank {
         Bank bank = new Bank(200, 0L, 1_000L);
         BigInteger initialTotal = bank.getSumOfAllAccounts();
         System.out.println("Initial total: " + initialTotal);
-        ReentrantLock lock = new ReentrantLock();
         Runnable runnable = () -> {
             switch (safeType) {
-                case UNSAFE -> bank.transfer();
+                case UNSAFE -> bank.transferUnsafe();
                 case SYNCHRONIZED -> bank.transferSynchronized();
-                case REENTRANT_LOCK -> bank.transferReentrantLock(lock);
+                case REENTRANT_LOCK -> bank.transferReentrantLock();
             }
         };
         List<Thread> threads = new ArrayList<>();
