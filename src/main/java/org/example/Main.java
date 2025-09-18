@@ -1,66 +1,67 @@
 package org.example;
 
+import org.example.hw05.Bank;
+import org.example.hw05.ListTest;
+import org.example.hw05.Perf05;
 
-import com.google.common.base.Stopwatch;
-
-import java.time.Duration;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
 
 public class Main {
     public static void main(String[] args) throws InterruptedException {
-        //Bulk Addition Test: Add 1,000,000 elements and measure:
-        for (int my = 0; my < 5; my++) {
-            for (int test = 0; test < 3; test++) {
-                Stopwatch stopwatch = Stopwatch.createStarted();
-                List list;
-                if (test == 1) {
-                    list = new ArrayList();
-                } else if (test == 2){
-                    list = new LinkedList<>();
-                } else {
-                    list = new CustomList();
-                }
-                for (int i = 0; i < 1_000_000; i++) {
-                    list.add(i);
-                }
-                stopwatch.stop();
-                Duration duration = stopwatch.elapsed();
-                System.out.println(String.format("%s Duration Millis add %s: %s", my, list.getClass(), duration.toMillis()));
-                Thread.sleep(1000);
-            }
-            Thread.sleep(1000);
-            System.out.println("---------------------------------------------------");
+        // 1. Multithreaded performance
+        Perf05 perf05 = new Perf05();
+        perf05.testSumWithParallelThreads(1);
+        perf05.testSumWithParallelThreads(10);
+        perf05.testSumWithParallelThreads(100);
+        perf05.testSumWithParallelThreads(1000);
+
+        perf05.testSumWithParallelStream(1);
+        perf05.testSumWithParallelStream(10);
+        perf05.testSumWithParallelStream(100);
+        perf05.testSumWithParallelStream(1000);
+
+        // 2. How heavy is the platform thread
+        perf05.testVirtualThreads();
+        perf05.testPlatformThreads();
+
+        // 3. Banking simulator
+        for (int i = 0; i < 100; i++) {
+            Bank.threadUnsafeTest(Bank.SafeType.UNSAFE);
+        }
+        for (int i = 0; i < 100; i++) {
+            Bank.threadUnsafeTest(Bank.SafeType.SYNCHRONIZED);
+        }
+        for (int i = 0; i < 100; i++) {
+            Bank.threadUnsafeTest(Bank.SafeType.REENTRANT_LOCK);
         }
 
-        //Remove test
-        for (int my = 0; my < 5; my++) {
-            for (int test = 0; test < 3; test++) {
-
-                List list;
-                if (test == 1) {
-                    list = new ArrayList();
-                } else if (test == 2){
-                    list = new LinkedList<>();
-                } else {
-                    list = new CustomList();
-                }
-                for (int i = 0; i < 10_000; i++) {
-                    list.add(i);
-                }
-                Stopwatch stopwatch = Stopwatch.createStarted();
-                for (int i = 0; i < 10_000; i++) {
-                    list.remove(0);
-                }
-                stopwatch.stop();
-                Duration duration = stopwatch.elapsed();
-                System.out.println(String.format("%s Duration Millis remove 0 element %s: %s", my, list.getClass(), duration.toMillis()));
-                Thread.sleep(1000);
-            }
-            Thread.sleep(1000);
-            System.out.println("---------------------------------------------------");
+        // 4. Multithreaded CustomList
+        long start = System.currentTimeMillis();
+        for (int i = 0; i < 100; i++) {
+            new ListTest().test(0);
         }
+        long duration = System.currentTimeMillis() - start;
+        System.out.println("Unsafe duration millis: " + duration);
+
+        start = System.currentTimeMillis();
+        for (int i = 0; i < 100; i++) {
+            new ListTest().test(1);
+        }
+        duration = System.currentTimeMillis() - start;
+        System.out.println("Sync duration millis: " + duration);
+
+        start = System.currentTimeMillis();
+        for (int i = 0; i < 100; i++) {
+            new ListTest().test(2);
+        }
+        duration = System.currentTimeMillis() - start;
+        System.out.println("Sync duration millis: " + duration);
+
+        /*
+        Deadlock deadlock = new Deadlock();
+        deadlock.test1();
+        deadlock.test2();
+        deadlock.test3();
+        deadlock.test4();
+        */
     }
-
 }
