@@ -22,7 +22,7 @@ public class Main {
         try {
             virtualServer.start();
             platformServer.start();
-            Thread.sleep(60_000 * 10 ); // Run for 1 minute
+            Thread.sleep(60_000 * 10 ); // Run for 10 minutes
         } finally {
             virtualServer.stop();
             platformServer.stop();
