@@ -180,7 +180,8 @@ public class CustomWebServer {
         response.write(("Content-Length: " + data.length + "\r\n").getBytes());
         response.write(("Content-Type: ").getBytes());
         response.write(contentTypeHeader);
-        response.write(("\r\n").getBytes());
+        response.write('\r');
+        response.write('\n');
         response.write('\r');
         response.write('\n');
         response.write(data);
