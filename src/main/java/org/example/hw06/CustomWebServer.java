@@ -51,7 +51,7 @@ public class CustomWebServer {
             try (ServerSocket serverSocket = new ServerSocket(this.port)) {
                 while (running) {
                     Socket socket = serverSocket.accept();
-                    handleClient(socket);
+                    executorService.submit(() -> handleClient(socket));
                 }
             } catch (IOException e) {
                 if (running) {
@@ -120,7 +120,7 @@ public class CustomWebServer {
             String requestUri = parts[1];
             String HttpVersion = parts[2];
 
-            System.out.printf("%s %s %s\n", method, requestUri, HttpVersion);
+            //System.out.printf("%s %s %s\n", method, requestUri, HttpVersion);
 
             if (method.equals("GET")) {
                 if (requestUri.equals("/api/time")) {

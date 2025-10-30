@@ -17,10 +17,16 @@ public class Main {
 //        // Test 3: Shutdown behavior
 //        testShutdownBehavior();
 
-        CustomWebServer customWebServer = new CustomWebServer(8080, 100, true);
-        customWebServer.start();
-        //customWebServer.stop();
-        Thread.sleep(60_000); // Run for 1 minute
+        CustomWebServer virtualServer = new CustomWebServer(8080, 100, true);
+        CustomWebServer platformServer = new CustomWebServer(8081, 50, false);
+        try {
+            virtualServer.start();
+            platformServer.start();
+            Thread.sleep(60_000 * 10 ); // Run for 1 minute
+        } finally {
+            virtualServer.stop();
+            platformServer.stop();
+        }
     }
 
     public static void testPerformanceComparison() throws InterruptedException {
