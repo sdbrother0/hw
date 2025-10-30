@@ -10,12 +10,12 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class Main {
     public static void main(String[] args) throws InterruptedException {
-//        // Test 1: Performance comparison
-//        testPerformanceComparison();
-//        // Test 2: Concurrent task execution
-//        testConcurrentExecution();
-//        // Test 3: Shutdown behavior
-//        testShutdownBehavior();
+        // Test 1: Performance comparison
+        testPerformanceComparison();
+        // Test 2: Concurrent task execution
+        testConcurrentExecution();
+        // Test 3: Shutdown behavior
+        testShutdownBehavior();
 
         CustomWebServer virtualServer = new CustomWebServer(8080, 100, true);
         CustomWebServer platformServer = new CustomWebServer(8081, 50, false);
