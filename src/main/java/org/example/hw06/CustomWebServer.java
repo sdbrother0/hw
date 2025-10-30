@@ -36,8 +36,8 @@ public class CustomWebServer {
     private Thread serverMainThread;
     private AtomicLong requestCount = new AtomicLong(0);
 
-    public CustomWebServer(int port) {
-        executorService = new CustomExecutorService(100, true);
+    public CustomWebServer(int port, int threadPoolSize, boolean useVirtualThreads) {
+        executorService = new CustomExecutorService(threadPoolSize, useVirtualThreads);
         this.port = port;
     }
 

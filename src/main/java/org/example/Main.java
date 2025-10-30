@@ -17,7 +17,7 @@ public class Main {
         // Test 3: Shutdown behavior
         testShutdownBehavior();
 
-        CustomWebServer customWebServer = new CustomWebServer(8080);
+        CustomWebServer customWebServer = new CustomWebServer(8080, 100, true);
         customWebServer.start();
         //customWebServer.stop();
         Thread.sleep(60_000); // Run for 1 minute
