@@ -19,7 +19,8 @@ import java.util.concurrent.atomic.AtomicLong;
 public class CustomWebServer {
 
     private static final Map<String, byte[]> staticResources = new ConcurrentHashMap<>();
-    private static final byte[] APPLICATION_JSON = "application/json".getBytes(StandardCharsets.UTF_8);
+    private static final byte[] APPLICATION_JSON = "application/json; charset=UTF-8".getBytes(StandardCharsets.UTF_8);
+
     public static final Map<String, byte[]> HEADER_MAP = Map.of(
         "", "text/html; charset=UTF-8".getBytes(StandardCharsets.UTF_8),
         ".html","text/html; charset=UTF-8".getBytes(StandardCharsets.UTF_8),
@@ -30,6 +31,7 @@ public class CustomWebServer {
         ".png", "image/png".getBytes(StandardCharsets.UTF_8),
         ".gif", "image/gif".getBytes(StandardCharsets.UTF_8),
         ".ico", "image/x-icon".getBytes(StandardCharsets.UTF_8));
+
     private final int port;
     private final ExecutorService executorService;
     private volatile boolean running = false;
@@ -74,8 +76,8 @@ public class CustomWebServer {
     private void handleClient(Socket clientSocket) {
         requestCount.incrementAndGet();
         try (InputStream inputStream = clientSocket.getInputStream();
-             OutputStream outputStream = clientSocket.getOutputStream()) {
-            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+             OutputStream outputStream = clientSocket.getOutputStream();
+             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
             int currChar, i = 0;
             int[] last4 = new int[4];
             while ((currChar = inputStream.read()) != -1) {
@@ -143,7 +145,7 @@ public class CustomWebServer {
                                 {
                                     "requestCount": "%s",
                                     "memoryUsed (MB)": %s,
-                                    "pid": %s
+                                    "pid": %s,
                                     "uptime (sec)": %s,
                                 }
                                 """,
@@ -180,12 +182,9 @@ public class CustomWebServer {
         response.write(("Content-Length: " + data.length + "\r\n").getBytes());
         response.write(("Content-Type: ").getBytes());
         response.write(contentTypeHeader);
-        response.write('\r');
-        response.write('\n');
-        response.write('\r');
-        response.write('\n');
+        response.write("\r\n\r\n".getBytes());
         response.write(data);
-        response.flush();
+        //response.flush();
     }
 
     private byte[] getStatic(String resource) {
