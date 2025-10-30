@@ -73,8 +73,8 @@ public class CustomWebServer {
 
     private void handleClient(Socket clientSocket) {
         requestCount.incrementAndGet();
-        try (InputStream inputStream = clientSocket.getInputStream(); OutputStream outputStream = clientSocket.getOutputStream()) {
-
+        try (InputStream inputStream = clientSocket.getInputStream();
+             OutputStream outputStream = clientSocket.getOutputStream()) {
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
             int currChar, i = 0;
             int[] last4 = new int[4];
@@ -106,7 +106,7 @@ public class CustomWebServer {
             }
             processRequest(requestHeaders, requestBody, outputStream);
         } catch (IOException e) {
-            e.printStackTrace();
+            System.err.println("Server error: " + e.getMessage());
         }
     }
 
