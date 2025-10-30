@@ -72,6 +72,7 @@ public class CustomWebServer {
     }
 
     private void handleClient(Socket clientSocket) {
+        requestCount.incrementAndGet();
         try (InputStream inputStream = clientSocket.getInputStream(); OutputStream outputStream = clientSocket.getOutputStream()) {
 
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
