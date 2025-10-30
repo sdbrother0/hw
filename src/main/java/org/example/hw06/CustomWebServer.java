@@ -82,12 +82,14 @@ public class CustomWebServer {
             int[] last4 = new int[4];
             while ((currChar = inputStream.read()) != -1) {
                 byteArrayOutputStream.write(currChar);
-                last4[0] = last4[1];
-                last4[1] = last4[2];
-                last4[2] = last4[3];
-                last4[3] = currChar;
-                if (last4[0] == '\r' &&  last4[1] == '\n' && last4[2] == '\r' && last4[3] == '\n') {
-                    break;
+                if (byteArrayOutputStream.size() >= 4) {
+                    last4[0] = last4[1];
+                    last4[1] = last4[2];
+                    last4[2] = last4[3];
+                    last4[3] = currChar;
+                    if (last4[0] == '\r' &&  last4[1] == '\n' && last4[2] == '\r' && last4[3] == '\n') {
+                        break;
+                    }
                 }
             }
 
@@ -120,9 +122,6 @@ public class CustomWebServer {
 
             String method = parts[0];
             String requestUri = parts[1];
-            String HttpVersion = parts[2];
-
-            //System.out.printf("%s %s %s\n", method, requestUri, HttpVersion);
 
             if (method.equals("GET")) {
                 if (requestUri.equals("/api/time")) {
