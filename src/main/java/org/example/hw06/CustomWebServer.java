@@ -184,7 +184,7 @@ public class CustomWebServer {
         response.write(contentTypeHeader);
         response.write("\r\n\r\n".getBytes());
         response.write(data);
-        //response.flush();
+        response.flush();
     }
 
     private byte[] getStatic(String resource) {
