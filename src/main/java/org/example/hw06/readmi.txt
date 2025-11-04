@@ -1,0 +1,7 @@
+curl --header "Content-Type: application/json" --request POST --data '{"a":"xyz1","b":"xyz2"}' http://localhost:8080/api/echo | jq
+
+http://localhost:8080/api/time
+http://localhost:8080/api/stats
+
+k6 run /Users/sd/IdeaProjects/hw/src/main/java/org/example/hw06/test-virtual.js && k6 run /Users/sd/IdeaProjects/hw/src/main/java/org/example/hw06/test-platform.js
+
