@@ -9,6 +9,9 @@ import java.lang.management.RuntimeMXBean;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Map;
@@ -38,9 +41,16 @@ public class CustomWebServer {
     private Thread serverMainThread;
     private AtomicLong requestCount = new AtomicLong(0);
 
+    private final Path BASE_PATH;
+
     public CustomWebServer(int port, int threadPoolSize, boolean useVirtualThreads) {
         executorService = new CustomExecutorService(threadPoolSize, useVirtualThreads);
         this.port = port;
+        try {
+            this.BASE_PATH = Paths.get("/var/www").toRealPath();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public void start() {
@@ -192,14 +202,14 @@ public class CustomWebServer {
         }
         byte[] data = staticResources.get(resource);
         if (data == null) {
-            InputStream inputStream = getClass().getClassLoader().getResourceAsStream(resource);
+            Path path = BASE_PATH.resolve(resource).normalize();
+            if (!path.startsWith(BASE_PATH)) {
+                return null; //fix...
+            }
             try {
-                if (inputStream != null) {
-                    data = inputStream.readAllBytes();
-                    staticResources.put(resource, data);
-                }
+                data = Files.readAllBytes(path);
             } catch (IOException e) {
-                data = null;
+                System.out.println("Error reading " + resource);
             }
         }
         return data;
